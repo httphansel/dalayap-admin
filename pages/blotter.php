@@ -103,7 +103,7 @@
                             <div class="card mx-3 mb-3">
                                 <div class="card-header mb-0 p-2 fw-bold bg-">
                                     <?= $blotter['bSender'] ?>
-                                    <p class="float-end"><?= $blotter['bDate'] ?></p>
+                                    <p class="float-end">Blotter Submitted on: <?= $blotter['bDate'] ?></p>
                                 </div>
                                 <div class="card-body mt-0 p-3">
                                     <p class="" style="font-size: 14px;"><?= $blotter['bReport'] ?></p>
@@ -129,9 +129,31 @@
                                         </div>
                                     </div>
 
-                                    <a href="../code/blotter.php?id=<?= $blotter['blotter_id'] ?>" class="btn btn-outline-success float-end me-1" type="button" name="resolveBtn">
+                                    <a role="button" class="btn btn-outline-success float-end me-1" data-bs-toggle="modal" data-bs-target="#summonModal<?= $blotter['blotter_id'] ?>">
                                         <i class="fa-solid fa-square-check"></i>
                                     </a>
+
+                                    <!-- summon modal -->
+                                    <div class="modal fade" id="summonModal<?= $blotter['blotter_id']?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-body text-center">
+                                                    <p class="h5 mt-3">Send a Summon Letter to this User?</p>
+                                                    <div class="row mt-3 float-end me-4">
+                                                        <div class="col">
+                                                            <form action="../code/blotter.php" method="post">
+                                                                <input type="text" name="blotter_id" value="<?= $blotter['blotter_id'] ?>" hidden>
+                                                                <input type="text" name="user_fullname" value="<?= $blotter['bSender'] ?>" hidden>
+                                                                <input type="text" name="user_email" value="<?= $blotter['user_email'] ?>" hidden>
+                                                                <button class="btn btn-outline-success ms-1" name="summonBtn">Yes</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
                                 </div>
                             </div>
                     <?php

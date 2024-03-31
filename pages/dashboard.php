@@ -67,7 +67,7 @@
         </aside>
 
         <div id="content">
-            <div class="container container-fluid p-3">
+            <div class="container container-fluid p-2">
                 <div class="row">
                     <?php
                     $admin_id = $_SESSION['admin_id'];
@@ -78,7 +78,7 @@
                     if ($adminResult->num_rows > 0) {
                         $admin = $adminResult->fetch_assoc();
                     ?>
-                        <p class="fw-bold align-self-end float-end mt-2 me-3 h2">Welcome, <?= $admin['admin_username'] ?></p>
+                        <p class="fw-bold align-self-end float-end me-3 h2">Welcome, <?= $admin['admin_username'] ?></p>
                     <?php
                     }
                     ?>

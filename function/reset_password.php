@@ -1,53 +1,75 @@
 <?php 
     require '../config/conn.php';
-    session_start();
-
-    /* this is for email authentication */
-    use PHPMailer\PHPMailer\PHPMailer;
-    use PHPMailer\PHPMailer\SMTP;
-    use PHPMailer\PHPMailer\Exception;
-
-    //Load Composer's autoloader
-    require '../vendor/autoload.php';
-
-    function resetPasswordLink($admin_email, $verification_code){
-        $mail = new PHPMailer(true);
-
-        $mail -> isSMTP();
-        $mail -> SMTPAuth = true;
-
-        $mail->Host = "smtp.gmail.com";
-        $mail->Username = "aikocastro025@gmail.com";
-        $mail->Password = "vjdq gwqp wgpp clnj";
-        $mail->SMTPSecure = "tls";
-        $mail->Port = 587;
-
-        $mail->setFrom("aikocastro025@gmail.com", "BIMS Password Reset");
-        $mail->addAddress($admin_email);
-
-        $mail->isHTML(true);
-        $mail->Subject = "BIMS Reset Password";
-
-        $email_template = "
-            <h3>This is your reset password link for BIMS</h3>
-            <h5>Please click the link below to reset your password.</h5>
-            <a href='http://localhost/bims/function/password_reset.php?verification_code=$verification_code'> Reset Password ! </a>
-        ";
-
-        $mail->Body = $email_template;
-        $mail->send();
-    }
-
-    if(isset($_POST['resetBtn'])){
-
-        $admin_email = mysqli_real_escape_string($conn, $_POST['admin_email']);
-        $verification_code = mysqli_real_escape_string($conn, $_POST['verification_code']);
-
-        resetPasswordLink("$admin_email", "$verification_code");
-
-        $_SESSION['message'] = "Password Reset link sent to your Email.";
-        $_SESSION['icon'] = "warning";
-        header('Location: ../pages/user_profile.php');
-        exit();
-    }
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?php 
+        include '../includes/links.php';
+    ?>
+    <title>PASSWORD RESET BRMS</title>
+</head>
+<body>
+    <?php 
+        include '../includes/navbar.php';
+    ?>
+    <div class="container container-fluid p-5">
+        <div class="row">
+            <div class="col-3">
+                <!-- filler columns -->
+            </div>
+            <div class="col">
+                <h3 class="text-center text-danger">Reset Your Password Here</h3>
+                <div class="border-bottom fw-bold text-success"></div>
+                <?php 
+                    $verification_code = $_GET['verification_code'];
+                    $selectAdminQuery = "SELECT * FROM admin_account WHERE verification_code = '$verification_code' ";
+                    $selectAdminResult = mysqli_query($conn, $selectAdminQuery);
+
+                    if($selectAdminResult->num_rows>0){
+                        $admin = $selectAdminResult->fetch_assoc();
+                ?>
+                    <form action="" method="post" class="text-center mt-3 px-5">
+                        <label for="" class="form-label fw-bold text-primary">EMAIL</label>
+                        <input type="text" class="form-control mb-3 text-center fw-bold" value="<?= $admin['admin_email'] ?>" readonly>
+                        <label for="" class="form-label fw-bold text-primary">USERNAME</label>
+                        <input type="text" class="form-control mb-3 text-center fw-bold" value="<?= $admin['admin_username'] ?>" readonly>
+                        <label for="password1" class="form-label fw-bold text-primary">NEW PASSWORD</label>
+                        <input type="password" id="password1" name="password1" class="form-control mb-3 text-center" onkeyup="comparePasswords()" required>
+                        <label for="password2" class="form-label fw-bold text-primary">CONFIRM NEW PASSWORD</label>
+                        <input type="password" id="password2" name="password2" class="form-control mb-3 text-center" onkeyup="comparePasswords()" required>
+
+                        <!-- error message -->
+                        <p id="passwordError" style="color: red; display: none;">Passwords do not match!</p>
+                        <button class="btn btn-outline-danger float-end">Reset Password</button>
+                    </form>
+                <?php 
+                    }
+                ?>
+            </div>
+            <div class="col-3">
+                <!-- filler columns -->
+            </div>
+        </div>
+    </div>
+    <?php 
+        include '../includes/scripts.php';
+    ?>
+    <script>
+    function comparePasswords() {
+        var password1 = document.getElementById("password1").value;
+        var password2 = document.getElementById("password2").value;
+        
+        var error = document.getElementById("passwordError");
+        
+        if (password1 === password2) {
+            error.style.display = "none";
+        } else {
+            error.style.display = "block";
+        }
+    }
+</script>
+</body>
+</html>
